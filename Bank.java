@@ -1,3 +1,16 @@
+/*
+ * Below are the core ones (everyone MUST accomplish them)
+-account creation (admin and user role)
+--admins must approve users before they can be used
+-transactions, must support withdrawals and deposits
+-must use logging
+-everything must NOT be in the main method.
+-data must be persisted using files or database
+*/
+
+// ICEBOX: import ascii art from files 
+
+
 package com.pennypincherbank.Bank;
 
 import java.util.HashMap;
@@ -5,10 +18,10 @@ import java.util.Map;
 
 public class Bank {
 	private String bankName = "Barracuda Blockchain Bank";
-//	make a dictionary to store the clients' accounts.
 	private Terminal atm;
 	private int balance = 0;
 	private int transactionCount;
+//	make a dictionary to store the clients' accounts.
 	private Map<Long, BankAccount> accountList;
 	
 	

@@ -1,5 +1,8 @@
 package com.pennypincherbank.Bank;
 
+import junit.
+import org.junit.Test;
+
 public class BankTest {
 //	@Test;
 //	public void testAccountCreation() {
@@ -15,6 +18,7 @@ public class BankTest {
 
 //	MVP
 	/*Test: no login creds, create user name and password*/
+	@Test
 	/*Test: login, with mocks, create username --> BIP 32 phrase as username/password*/
 	/**/
 	/*Test: login as admin*/
