@@ -22,5 +22,15 @@ public class UserService {
 	public boolean helloWorld() {
 		return UserDaoImp.getInstance().helloWorldProcedure();
 	}
+	public User login(User user) {
+//		get user info w/o validation
+		User attempt = UserDaoImp.getInstance().select(user);
+//		login protocol: we hash the user input, which returns a hash, 
+//		and we match that to the one stored in the db
+		if (attempt.getPasshash().equals(UserDaoImp.getInstance().getUserHash(user))) {
+			return user;
+		}
+		return new User();
+	}
 
 }

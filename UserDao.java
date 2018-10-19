@@ -9,5 +9,5 @@ public interface UserDao {
 	public boolean insertProcedure(User user);
 	public User select(User user);
 	public List<User> selectAll();
-	public String getCustomerHash(User user);
+	public String getUserHash(User user);
 }

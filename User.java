@@ -3,18 +3,32 @@ package com.pennypincherbank.Bank;
 public class User {
 	
 	private int user_id;
-	private String name;
+	private String username;
+	private String firstName;
+	private String lastName;
 	private String passhash;
 	
-	public User(String name, String passhash) {
+	public User(String firstName, String lastName, String passhash) {
 		super();
-		this.name		= name;
+		this.firstName		= firstName;
+		this.lastName = lastName;
 		this.passhash	= passhash;
 	}
+	public User(int id, String username, String password) {
+		super();
+		this.user_id = id;
+		this.username = username;
+		this.passhash = password;
+	}
 
+	public User(String username, String password) {
+		super();
+		this.username = username;
+		this.passhash = password;
+	}
 	public User() {
 		super();
-		this.name = "";
+		this.username = "";
 		this.passhash = "";
 	}
 
@@ -25,13 +39,28 @@ public class User {
 	public void setId(int id) {
 		this.user_id = id;
 	}
+	
 
-	public String getName() {
-		return name;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getFirstname() {
+		return firstName;
+	}
+	public void setFirstname(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastname() {
+		return lastName;
+	}
+
+	public void setLastname(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getPasshash() {
@@ -44,7 +73,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return ("User with id " + this.user_id + " named " + this.name + " and password " + this.passhash);
+		return ("User with id " + this.user_id + " named " + this.firstName + " " + this.lastName + " and password " + this.passhash);
 	}
 	
 	

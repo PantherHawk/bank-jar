@@ -2,15 +2,17 @@ package com.pennypincherbank.Bank;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 public class UserDaoImp implements UserDao {
 	
 	private static UserDaoImp userDaoImp;
-	final static Logger logger = Logger.getLogger(UserDaoImp.class);
+//	final static Logger logger = Logger.getLogger(UserDaoImp.class);
 //	set up the singleton
 	public static UserDaoImp getInstance() {
 		if (userDaoImp == null) {
@@ -37,8 +39,10 @@ public class UserDaoImp implements UserDao {
 				return true;
 			}
 		} catch(SQLException e) {
-			logger.debug("(╯°□°）╯︵ ┻━┻\r\n" + 
-					": ", e);
+			System.out.println("Erred with  -----> " + e);
+			e.printStackTrace();
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
 		}
 		return false;
 	}
@@ -51,7 +55,10 @@ public class UserDaoImp implements UserDao {
 			String sql = "INSERT INTO USERS VALUES (1, 'test', 'test', 1, 1)";
 			
 		} catch(SQLException e) {
-			logger.debug(e);
+			System.out.println("Erred with  -----> " + e);
+			e.printStackTrace();
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
 		}
 		return false;
 	}
@@ -67,25 +74,46 @@ public class UserDaoImp implements UserDao {
 		try (Connection connect = ConnectionUtil.getConnection()) {
 			String storedProc = "CALL add_user (?, ?)";
 			int statementIndex = 0;
-			String firstName = "test";
-			String lastName = "test";
+//			String firstName = "test";
+//			String lastName = "test";
 			CallableStatement cs = connect.prepareCall(storedProc);
 			
-			cs.setString(++statementIndex, user.getName().toUpperCase());
+			cs.setString(++statementIndex, user.getUsername().toUpperCase());
 			cs.setString(++statementIndex, user.getPasshash().toUpperCase());
 			if (cs.execute()) {
 				return true;
 			}
-		} catch(SQLException e) {
-			logger.debug("(╯°□°）╯︵ ┻━┻\r\n" + 
-					": ", e);
+		} catch(SQLException | ClassNotFoundException e) {
+			System.out.println("Erred with  -----> " + e);
+			e.printStackTrace();
 		}	return false;
 	}
 
 	@Override
 	public User select(User user) {
-		// TODO Auto-generated method stub
-		return null;
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			int statementIndx = 0;
+			System.out.println(user.toString());
+			System.out.println("running from select method.");
+			String sql = "SELECT * FROM USERS WHERE USERNAME = ?";
+			
+			PreparedStatement p = conn.prepareStatement(sql);
+			p.setString(++statementIndx, user.getUsername());
+			ResultSet result = p.executeQuery();
+			
+			while (result.next()) {
+//				logger.info("from the logger...");
+				return new User(
+						result.getInt("USER_ID"),
+						result.getString("FIRST_NAME"),
+						result.getString("LAST_NAME")
+						);
+			}
+		} catch(SQLException | ClassNotFoundException e) {
+			System.out.println("Erred with ------>" + e);
+			e.printStackTrace();
+		}
+		return new User();
 	}
 
 	@Override
@@ -95,10 +123,24 @@ public class UserDaoImp implements UserDao {
 	}
 
 	@Override
-	public String getCustomerHash(User user) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	public String getUserHash(User user) {
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			int statementIndx = 0;
+			String command = "SELECT GET_CUSTOMER_HASH(?, ?) AS HASH FROM DUAL"; // WHY CALL THIS COMMAND AND NOT SQL ?
+			PreparedStatement p = conn.prepareStatement(command);
+			p.setString(++statementIndx, user.getUsername());
+			p.setString(++statementIndx, user.getPasshash());
+			
+			ResultSet result = p.executeQuery();
+			
+			if (result.next()) {
+				System.out.println("Result is -------> " + result.toString());
+				return result.toString();
+			}
+		} catch (SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	return new String();
+  }
 	
 }
