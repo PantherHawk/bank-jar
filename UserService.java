@@ -1,5 +1,7 @@
 package com.pennypincherbank.Bank;
 
+import java.util.List;
+
 public class UserService {
 	
 //	set up singleton
@@ -22,16 +24,19 @@ public class UserService {
 	public boolean helloWorld() {
 		return UserDaoImp.getInstance().helloWorldProcedure();
 	}
+	public List<User> getAllUsers() {
+		return UserDaoImp.getInstance().selectAll();
+	}
 	public User login(User user) {
 //		get user info w/o validation
 		User attempt = UserDaoImp.getInstance().select(user);
-		System.out.println("attempt: " + attempt);
+//		System.out.println("attempt: " + attempt);
 //		login protocol: we hash the user input, which returns a hash, 
 //		and we match that to the one stored in the db
 		System.out.println("user passhash ====>" + attempt.getPasshash());
 		if (UserDaoImp.getInstance().getUserHash(attempt).equals(UserDaoImp.getInstance().getUserHash(user))) {
 			System.out.println("login success");
-			return user;
+			return attempt;
 		}
 		System.out.println("login failed.");
 		return new User();

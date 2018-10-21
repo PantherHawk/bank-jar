@@ -3,22 +3,22 @@ package com.pennypincherbank.Bank;
 public class User {
 	
 	private int user_id;
+	private int user_role;
+	private int isRegistered;
 	private String username;
 	private String firstName;
 	private String lastName;
 	private String passhash;
 	
-	public User(String firstName, String lastName, String passhash) {
+	public User(int user_id,int user_role, int isRegistered, String username, String passhash, String firstName, String lastName) {
 		super();
-		this.firstName		= firstName;
-		this.lastName = lastName;
+		this.user_id	= user_id;
+		this.username	= username;
+		this.firstName	= firstName;
+		this.lastName	= lastName;
 		this.passhash	= passhash;
-	}
-	public User(int id, String username, String password) {
-		super();
-		this.user_id = id;
-		this.username = username;
-		this.passhash = password;
+		this.isRegistered = isRegistered;
+		this.user_role = user_role;
 	}
 
 	public User(String username, String password) {
@@ -71,9 +71,28 @@ public class User {
 		this.passhash = passhash;
 	}
 
+	public int getUser_role() {
+		return user_role;
+	}
+	public void setUser_role(int user_role) {
+		this.user_role = user_role;
+	}
+	public int getIsRegistered() {
+		return isRegistered;
+	}
+	public void setIsRegistered(int isRegistered) {
+		this.isRegistered = isRegistered;
+	}
 	@Override
 	public String toString() {
-		return ("User with id " + this.user_id + " named " + this.firstName + " " + this.lastName + " and password " + this.passhash);
+		return ("id =  " + this.user_id + 
+				"\n username = " + this.username +
+				"\n password = " + this.passhash +
+				"\n first name = " + this.firstName + 
+				"\n last name = " + this.lastName + 
+				"\n role level = " + this.user_role + 
+				"\n registered = " + this.isRegistered
+				);
 	}
 	
 	

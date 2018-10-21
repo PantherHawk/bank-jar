@@ -5,7 +5,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.revature.goodbye.ConnectionUtil;
 
 //import org.apache.log4j.Logger;
 
@@ -106,8 +109,12 @@ public class UserDaoImp implements UserDao {
 //				logger.info("from the logger...");
 				return new User(
 						result.getInt("USER_ID"),
+						result.getInt("ROLE_ID"),
+						result.getInt("PENDING"),
 						result.getString("USERNAME"),
-						result.getString("PASSWORD")
+						result.getString("PASSWORD"),
+						result.getString("FIRST_NAME"),
+						result.getString("LAST_NAME")
 						);
 			}
 		} catch(SQLException | ClassNotFoundException e) {
@@ -119,8 +126,29 @@ public class UserDaoImp implements UserDao {
 
 	@Override
 	public List<User> selectAll() {
-		// TODO Auto-generated method stub
-		return null;
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "SELECT * FROM USERS";
+			PreparedStatement p = conn.prepareStatement(sql);
+			ResultSet result = p.executeQuery();
+			
+			List<User> userList = new ArrayList<>();
+			while(result.next()) {
+				System.out.println("Building list of users.");
+				userList.add(new User(
+						result.getInt("USER_ID"),
+						result.getInt("ROLE_ID"),
+						result.getInt("PENDING"),
+						result.getString("USERNAME"),
+						result.getString("PASSWORD"),
+						result.getString("FIRST_NAME"),
+						result.getString("LAST_NAME")
+						));
+			}
+			return userList;
+		} catch(SQLException | ClassNotFoundException e) {
+			e.printStackTrace() ;
+		}
+		return new ArrayList<>();
 	}
 
 	@Override

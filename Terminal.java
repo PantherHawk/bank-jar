@@ -1,11 +1,14 @@
 package com.pennypincherbank.Bank;
 
-import java.io.File;
 //import java.io.FileNotFoundException;
 //import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 //import java.io.PrintWriter;
 import java.util.Scanner;
+import java.util.concurrent.CopyOnWriteArrayList;
 //import java.util.logging.Logger;
 
 //import org.apache.log4j.BasicConfigurator;
@@ -28,7 +31,11 @@ public class Terminal {
 		String passhash = sc.nextLine();	
 //		look up in db to find user 
 		System.out.println("Trying to log in ...");
-		UserService.getInstance().login(new User(username, passhash));
+		User user = UserService.getInstance().login(new User(username, passhash));
+		System.out.println(user.toString());
+		System.out.println(user.getUser_role() > 0 ? "Welcome admin!" : "Welcome " + user.getFirstname());
+		checkAdminStatus(user);
+		
 //		if user in db, return user info.
 		
 //		otherwise handle no user found in db.
@@ -37,6 +44,28 @@ public class Terminal {
 		sc.close();
 		System.exit(0);
 		  
+	}
+	public static void checkAdminStatus(User user) {
+		System.out.println("user role id: " + user.getUser_role());
+		if (user.getUser_role() > 0) {
+			System.out.println("Welcome admin privelaged user!");
+			System.out.println(" Here are your pending users.");
+			final List<User> userList = UserService.getInstance().getAllUsers();
+			final List<User> verifiedUsers = new ArrayList<User>();
+			Iterator<User> iter = userList.iterator();
+			
+			while(iter.hasNext()) {
+				User u = iter.next();
+				
+				if (u.getIsRegistered() > 0) {
+					verifiedUsers.add(u);
+					iter.remove();
+				}
+			}
+			System.out.println("verified users: " + verifiedUsers);
+			System.out.println("pending users: " + userList);
+			
+		}
 	}
 }
 
