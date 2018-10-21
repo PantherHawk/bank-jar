@@ -99,14 +99,15 @@ public class UserDaoImp implements UserDao {
 			
 			PreparedStatement p = conn.prepareStatement(sql);
 			p.setString(++statementIndx, user.getUsername());
+			System.out.println("username is " + user.getUsername());
 			ResultSet result = p.executeQuery();
-			
+//			System.out.println("result from select query: " + result.getString(1));
 			while (result.next()) {
 //				logger.info("from the logger...");
 				return new User(
 						result.getInt("USER_ID"),
-						result.getString("FIRST_NAME"),
-						result.getString("LAST_NAME")
+						result.getString("USERNAME"),
+						result.getString("PASSWORD")
 						);
 			}
 		} catch(SQLException | ClassNotFoundException e) {
@@ -134,8 +135,8 @@ public class UserDaoImp implements UserDao {
 			ResultSet result = p.executeQuery();
 			
 			if (result.next()) {
-				System.out.println("Result is -------> " + result.toString());
-				return result.toString();
+				System.out.println("Result is -------> " + result.getString(1));
+				return result.getString(1);
 			}
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
