@@ -27,6 +27,10 @@ public class UserService {
 	public List<User> getAllUsers() {
 		return UserDaoImp.getInstance().selectAll();
 	}
+	public boolean verifyUser(User user) {
+//		get user DAO instance, call verify user
+		return UserDaoImp.getInstance().verifyUser(user);
+	}
 	public User login(User user) {
 //		get user info w/o validation
 		User attempt = UserDaoImp.getInstance().select(user);

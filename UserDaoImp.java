@@ -150,6 +150,23 @@ public class UserDaoImp implements UserDao {
 		}
 		return new ArrayList<>();
 	}
+	
+	public boolean verifyUser(User user) {
+		try (Connection conn = ConnectionUtil.getConnection()) {
+			int statementIndex = 0;
+			String updateSql = "UPDATE USERS SET PENDING = 1 WHERE USERNAME = ?";
+			PreparedStatement ps = conn.prepareStatement(updateSql);
+			ps.setString(++statementIndex, user.getUsername());
+			if (ps.executeUpdate() > 0) {
+				return true;
+			}
+			System.out.println(user.getFirstname() + " " + user.getLastname() + " updated and verified.");
+		} catch (SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	
+		return false;
+	}
 
 	@Override
 	public String getUserHash(User user) {

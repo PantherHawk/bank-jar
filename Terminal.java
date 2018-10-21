@@ -35,16 +35,40 @@ public class Terminal {
 		System.out.println(user.toString());
 		System.out.println(user.getUser_role() > 0 ? "Welcome admin!" : "Welcome " + user.getFirstname());
 		checkAdminStatus(user);
-		
+		System.out.println("Press (v) to verify users, (m) to manage your accounts, or (t) to view your transactions.");
 //		if user in db, return user info.
-		
+		while( sc.hasNextLine() ) {
+			String s = sc.nextLine();
+			if (s.startsWith("v")) {
+	//			handle verify users procedure
+				verifyUsers(allUsers);
+			} else if (s.startsWith("m")) {
+	//			handle get all accounts procedure
+			} else if (s.startsWith("t")) {
+	//			handle get all transactions for user procedure
+			} else if (s.startsWith("h")) {
+//				handle help procedure and print out options again
+			} else if (s.startsWith("q")) {
+//				handle quit procedure
+			}
 //		otherwise handle no user found in db.
+		}
+		if (user.getId() < 1) {
+			System.out.println("It looks liket this is your first time.  Type (j) to get started!");
+//			add new user program
+		}
 //		ask for credentials
 //		make new user 
 		sc.close();
 		System.exit(0);
 		  
 	}
+	private static final String CUSTOMER_TRANSACTIONS = 
+			"	Customer transactions: " +
+					"deposit, withdraw, transfer, balance, quit, help.";
+	
+	public static List<User> allUsers = UserService.getInstance().getAllUsers();
+	
 	public static void checkAdminStatus(User user) {
 		System.out.println("user role id: " + user.getUser_role());
 		if (user.getUser_role() > 0) {
@@ -66,6 +90,24 @@ public class Terminal {
 			System.out.println("pending users: " + userList);
 			
 		}
+	}
+	public static void verifyUsers(List<User> users) {
+		Scanner sc = new Scanner(System.in);
+
+		for (User user : users) {
+			System.out.println("id: " + users.indexOf(user) + " " + user.getFirstname() + " " + user.getLastname());
+		}
+		System.out.println(" Type the id of the user you want to verify!");
+		String s = sc.nextLine();
+		String[] ids = s.split("");
+		for (String id : ids) {
+			User toAdd = users.get(Integer.parseInt(id));
+			System.out.println("Adding user: " + users.get(Integer.parseInt(id)));
+			if (UserService.getInstance().verifyUser(toAdd)) {
+				System.out.println("Verified " + toAdd.getFirstname() + " " + toAdd.getLastname() + " .");
+			}
+		}
+		sc.close();
 	}
 }
 
