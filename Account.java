@@ -18,6 +18,13 @@ public class Account {
 		this.curr_balance	= curr_balance;
 		this.name			= name;
 	}
+	public Account(int id, int balance, int user_id, String name) {
+		super();
+		this.id = id;
+		this.curr_balance = balance;
+		this.user_id = user_id;
+		this.name = name;
+	}
 	
 //	an overridden constructor to generate a DAO with all the fields from the DB.
 	public Account(int id, int user_id, LocalDateTime date_opened, LocalDateTime date_close, int curr_balance,

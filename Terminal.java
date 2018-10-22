@@ -38,11 +38,12 @@ public class Terminal {
 //		if user in db, return user info.
 		while( sc.hasNextLine() ) {
 			String s = sc.nextLine();
-			if (s.startsWith("v")) {
+			if (s.startsWith("v") && user.getUser_role() > 0) {
 	//			handle verify users procedure
 				verifyUsers(allUsers);
 			} else if (s.startsWith("m")) {
 	//			handle get all accounts procedure
+				manageAccounts(user);
 			} else if (s.startsWith("t")) {
 	//			handle get all transactions for user procedure
 			} else if (s.startsWith("h")) {
@@ -116,6 +117,15 @@ public class Terminal {
 			}
 		}
 		sc.close();
+	}
+	public static void manageAccounts(User user) {
+//		get list of accounts
+		List<Account> allMyAccounts = AccountSerivce.getInstance().getAccount(user);
+		for (int i=0; i < allMyAccounts.size(); i++) {
+			Account myAccount = allMyAccounts.get(i);
+			System.out.println(" \n " + i + " account: " + myAccount.getName() + 
+					"\n current balance: " + myAccount.getCurr_balance());
+		}
 	}
 }
 
