@@ -55,15 +55,15 @@ public class UserDaoImp implements UserDao {
 		int statementIndex = 0;
 		try (Connection connect = ConnectionUtil.getConnection()) {
 //			read from db
-			String sql = "INSERT INTO USERS (0, 0, ?, ?, ?, ?)";
-			PreparedStatement ps = connect.prepareStatement(sql);
-			ps.setString(++statementIndex, user.getFirstname());
-			ps.setString(++statementIndex, user.getLastname());
-			ps.setString(++statementIndex, user.getUsername());
-			ps.setString(++statementIndex, user.getPasshash());
+			String sql = "CALL ADD_USER (0, 0, ?, ?, ?, ?)";
+			CallableStatement cs = connect.prepareCall(sql);
+			cs.setString(++statementIndex, user.getFirstname());
+			cs.setString(++statementIndex, user.getLastname());
+			cs.setString(++statementIndex, user.getUsername());
+			cs.setString(++statementIndex, user.getPasshash());
 			
-			
-			if (ps.executeUpdate() > 0) {
+			if (cs.execute()) {
+				System.out.println("add user to db success.");
 				return true;
 			}
 		} catch(SQLException e) {

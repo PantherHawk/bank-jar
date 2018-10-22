@@ -30,11 +30,17 @@ public class Terminal {
 				verifyUsers(allUsers);
 			} else if (s.startsWith("m")) {
 	//			handle get all accounts procedure
-				manageAccounts(user);
+				if (user.getIsRegistered() > 0) {
+					manageAccounts(user);
+				} else {
+					System.out.println("You have not yet been registered.");
+				}
+				
 			} else if (s.startsWith("t")) {
 	//			handle get all transactions for user procedure
 			} else if (s.startsWith("h")) {
 //				handle help procedure and print out options again
+				System.out.println(user.getUser_role() > 0 ? ADMIN_TRANSACTIONS : CUSTOMER_TRANSACTIONS);
 //				TO DO
 				if (user.getUser_role() > 0) {
 					System.out.println(ADMIN_TRANSACTIONS);
@@ -116,6 +122,12 @@ public class Terminal {
 //		look up in db to find user 
 		System.out.println("Trying to log in ...");
 		user = UserService.getInstance().login(new User(username, passhash));
+		System.out.println("user is   " + user);
+		while (user.getId() == 0) {
+			handleNewUser();
+		}
+		
+		
 		System.out.println(user.toString());
 		System.out.println(user.getUser_role() > 0 ? "Welcome admin!" : "Welcome " + user.getFirstname());
 		checkAdminStatus(user);
@@ -129,9 +141,14 @@ public class Terminal {
 	public static void manageAccounts(User user) {
 //		get list of accounts
 		List<Account> allMyAccounts = AccountSerivce.getInstance().getAccount(user);
+		if (allMyAccounts.isEmpty()) {
+			System.out.println("It doesn't look like you have any accounts yet. \n Add your first account!");
+//			add an account
+//			
+		}
 		for (int i=0; i < allMyAccounts.size(); i++) {
 			Account myAccount = allMyAccounts.get(i);
-			System.out.println(" \n Press" + i + " to deposit or withdraw from your " + myAccount.getName() + 
+			System.out.println(" \n Press " + i + " to deposit or withdraw from your " + myAccount.getName() + 
 					" account " + "\n current balance: " + myAccount.getCurr_balance());
 		}
 		String chose = scanner.nextLine();
@@ -141,7 +158,31 @@ public class Terminal {
 			manageAccounts(user);
 		}
 		account = allMyAccounts.get(Integer.parseInt(chose));
-		System.out.println("You chose account named: " + account.getName());
+		System.out.println("You chose account  named: " + account.getName());
+	}
+	public static void handleNewUser() {
+		System.out.println("It doesn't look you have an account yet. \n" + 
+								" Press 0 to log in again or 1 to create a new account.");
+		if (Integer.parseInt(scanner.nextLine()) != 0) {
+//			create a new account
+			System.out.println("Great! Let's get started. \n Please enter your first name.");
+			String firstName = scanner.nextLine();
+			System.out.println(" Please enter your last name.");
+			String lastName = scanner.nextLine();
+			System.out.println(" Please enter a username. ");
+			String username = scanner.nextLine();
+			System.out.println(" And please enter a password.");
+			String password = scanner.nextLine();
+			Boolean addUserSuccess = UserService.getInstance().addUser(new User(0, 0, 0, username, password, firstName, lastName));
+			if (addUserSuccess) {
+				System.out.println(" Welcome to the Penny Pinchers family!");
+			} else {
+				System.out.println("Something went wrong, we could not add you to the DB...");
+			}
+		} else {
+//			scanner.close();
+			start();
+		}
 	}
 	public static Scanner scanner = null;
 	public static User user = null;
