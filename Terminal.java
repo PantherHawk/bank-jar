@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 //import java.io.PrintWriter;
 import java.util.Scanner;
-import java.util.concurrent.CopyOnWriteArrayList;
 //import java.util.logging.Logger;
 
 //import org.apache.log4j.BasicConfigurator;
@@ -48,6 +47,11 @@ public class Terminal {
 	//			handle get all transactions for user procedure
 			} else if (s.startsWith("h")) {
 //				handle help procedure and print out options again
+				if (user.getUser_role() > 0) {
+					System.out.println(ADMIN_TRANSACTIONS);
+				} else {
+					System.out.println(CUSTOMER_TRANSACTIONS);
+				}
 			} else if (s.startsWith("q")) {
 //				handle quit procedure
 			}
@@ -65,7 +69,10 @@ public class Terminal {
 	}
 	private static final String CUSTOMER_TRANSACTIONS = 
 			"	Customer transactions: " +
-					"deposit, withdraw, transfer, balance, quit, help.";
+					"(d)eposit, (w)ithdraw, (t)ransfer, (b)alance, (q)uit, (h)elp.";
+	private static final String ADMIN_TRANSACTIONS = 
+			"	Admin options: " +
+					"(v)erify users, view (t)ransactions, view (a)ll users, (q)uit, (h)elp." + CUSTOMER_TRANSACTIONS;
 	
 	public static List<User> allUsers = UserService.getInstance().getAllUsers();
 	
@@ -103,7 +110,8 @@ public class Terminal {
 		for (String id : ids) {
 			User toAdd = users.get(Integer.parseInt(id));
 			System.out.println("Adding user: " + users.get(Integer.parseInt(id)));
-			if (UserService.getInstance().verifyUser(toAdd)) {
+			if (UserService.getInstance().verifyUser(toAdd)) { 
+				
 				System.out.println("Verified " + toAdd.getFirstname() + " " + toAdd.getLastname() + " .");
 			}
 		}

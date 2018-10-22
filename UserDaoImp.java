@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.revature.goodbye.ConnectionUtil;
+//import com.revature.goodbye.ConnectionUtil;
 
 //import org.apache.log4j.Logger;
 
@@ -52,11 +52,20 @@ public class UserDaoImp implements UserDao {
 	
 	@Override
 	public boolean insert(User user) {
-		int statementIndex;
+		int statementIndex = 0;
 		try (Connection connect = ConnectionUtil.getConnection()) {
 //			read from db
-			String sql = "INSERT INTO USERS VALUES (1, 'test', 'test', 1, 1)";
+			String sql = "INSERT INTO USERS (0, 0, ?, ?, ?, ?)";
+			PreparedStatement ps = connect.prepareStatement(sql);
+			ps.setString(++statementIndex, user.getFirstname());
+			ps.setString(++statementIndex, user.getLastname());
+			ps.setString(++statementIndex, user.getUsername());
+			ps.setString(++statementIndex, user.getPasshash());
 			
+			
+			if (ps.executeUpdate() > 0) {
+				return true;
+			}
 		} catch(SQLException e) {
 			System.out.println("Erred with  -----> " + e);
 			e.printStackTrace();
