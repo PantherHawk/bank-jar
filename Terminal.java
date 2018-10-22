@@ -20,24 +20,11 @@ public class Terminal {
 	
 	public static void main(String[] args) throws IOException {
 //		BasicConfigurator.configure();
-		Scanner sc = new Scanner(System.in);
-		
+	
+		start();
 //		welcome user to the bank
-		System.out.println("Welcome to the penny pincher's bank!");
-		System.out.println("Please enter your username.");
-		String username = sc.nextLine();
-		System.out.println("Please enter your unique password.");
-		String passhash = sc.nextLine();	
-//		look up in db to find user 
-		System.out.println("Trying to log in ...");
-		User user = UserService.getInstance().login(new User(username, passhash));
-		System.out.println(user.toString());
-		System.out.println(user.getUser_role() > 0 ? "Welcome admin!" : "Welcome " + user.getFirstname());
-		checkAdminStatus(user);
-		System.out.println("Press (v) to verify users, (m) to manage your accounts, or (t) to view your transactions.");
-//		if user in db, return user info.
-		while( sc.hasNextLine() ) {
-			String s = sc.nextLine();
+		while( scanner.hasNextLine() ) {
+			String s = scanner.nextLine();
 			if (s.startsWith("v") && user.getUser_role() > 0) {
 	//			handle verify users procedure
 				verifyUsers(allUsers);
@@ -48,6 +35,7 @@ public class Terminal {
 	//			handle get all transactions for user procedure
 			} else if (s.startsWith("h")) {
 //				handle help procedure and print out options again
+//				TO DO
 				if (user.getUser_role() > 0) {
 					System.out.println(ADMIN_TRANSACTIONS);
 				} else {
@@ -55,6 +43,7 @@ public class Terminal {
 				}
 			} else if (s.startsWith("q")) {
 //				handle quit procedure
+//				TO DO: 
 			}
 //		otherwise handle no user found in db.
 		}
@@ -64,7 +53,6 @@ public class Terminal {
 		}
 //		ask for credentials
 //		make new user 
-		sc.close();
 		System.exit(0);
 		  
 	}
@@ -118,15 +106,46 @@ public class Terminal {
 		}
 		sc.close();
 	}
+	public static Scanner start() {
+		scanner = new Scanner(System.in);
+		System.out.println("Welcome to the penny pincher's bank!");
+		System.out.println("Please enter your username.");
+		String username = scanner.nextLine();
+		System.out.println("Please enter your unique password.");
+		String passhash = scanner.nextLine();	
+//		look up in db to find user 
+		System.out.println("Trying to log in ...");
+		user = UserService.getInstance().login(new User(username, passhash));
+		System.out.println(user.toString());
+		System.out.println(user.getUser_role() > 0 ? "Welcome admin!" : "Welcome " + user.getFirstname());
+		checkAdminStatus(user);
+		System.out.println(user.getUser_role() > 0 ? 
+				"Press (v) to verify users, (m) to manage your accounts, or (t) to view your transactions." : 
+					"Press (m) to manage your accounts, or (t) to view your transactions."
+			);
+//		if user in db, return user info.
+		return scanner;
+	}
 	public static void manageAccounts(User user) {
 //		get list of accounts
 		List<Account> allMyAccounts = AccountSerivce.getInstance().getAccount(user);
 		for (int i=0; i < allMyAccounts.size(); i++) {
 			Account myAccount = allMyAccounts.get(i);
-			System.out.println(" \n " + i + " account: " + myAccount.getName() + 
-					"\n current balance: " + myAccount.getCurr_balance());
+			System.out.println(" \n Press" + i + " to deposit or withdraw from your " + myAccount.getName() + 
+					" account " + "\n current balance: " + myAccount.getCurr_balance());
 		}
+		String chose = scanner.nextLine();
+//		handle not in range case, like chose 10 and there are only 2 accounts
+		if (Integer.parseInt(chose) > allMyAccounts.size() || Integer.parseInt(chose) < 0) {
+			System.out.println("Sorry, that account doesn't exist. \n");
+			manageAccounts(user);
+		}
+		account = allMyAccounts.get(Integer.parseInt(chose));
+		System.out.println("You chose account named: " + account.getName());
 	}
+	public static Scanner scanner = null;
+	public static User user = null;
+	public static Account account = null;
 }
 
 //while ((line = scanner.nextLine()) != null) {
