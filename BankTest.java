@@ -16,19 +16,29 @@ public class BankTest {
 //	public void testAdminCreation() {
 //	}
 
+	/*REQUIREMENTS: 
+	 * Below are the core ones (everyone MUST accomplish them)
+-account creation (admin and user role)
+--admins must approve users before they can be used
+-transactions, must support withdrawals and deposits
+-must use logging
+-everything must NOT be in the main method.
+-data must be persisted using files.
+*/
 //	MVP
-	/*Test: no login creds, create user name and password* / 
+	/* DONE Test: no login creds, create user name and password* / 
 	@Test
-	/*Test: login, with mocks, create username --> BIP 32 phrase as username/password*/
+	/*DONE Test: login, with mocks, create credentials */
 	/**/
-	/*Test: login as admin*/
-	/*Test: deposit, create username, login, deposit moneys, ask for receipt*/
-	/*Test: admin approves pending user requests*/
+	/*DONE Test: login as admin*/
+	/*DONE Test: deposit, create username, login, deposit moneys, */
+	/*DONE Test: admin approves pending user requests*/
 	/*Test: all method calls have log*/
 	
 	/*ICE BOX*/
 	/*Test: would you like receipt? no*/
 	/*Test: would you like receipt? yes, return account balance, date, Thank you, come again*/
-	/**/
+	/*BIP 32 phrase as username/password*/
+	/*ask for receipt*/
 	
 }
