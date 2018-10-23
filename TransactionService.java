@@ -22,4 +22,7 @@ public class TransactionService {
 	public List<Transaction> getTxsForUser(int user_id) {
 		return TransactionDaoImp.getInstance().fetchAllBelongingToUser(user_id);
 	}
+	public List<Transaction> getTxsByType(int user_id, String withdrawOrDeposit) {
+		return TransactionDaoImp.getInstance().fetchAllDepositsOrWithdrawals(user_id, withdrawOrDeposit);
+	}
 }

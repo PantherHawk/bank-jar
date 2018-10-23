@@ -31,12 +31,12 @@ public class AccountDaoImp implements AccountDao {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			int statementIndex = 0;
 			
-			String sql = "UPDATE ACCOUNT SET BALANCE = BALANCE - ? WHERE USER_ID = ?";
+			String sql = "UPDATE ACCOUNT SET BALANCE = BALANCE - ? WHERE USER_ID = ? AND ID = ?";
 			
 			PreparedStatement stmt  = conn.prepareStatement(sql);
 			stmt.setInt(++statementIndex, amount);
 			stmt.setInt(++statementIndex, account.getUser_id());
-			
+			stmt.setInt(++statementIndex, account.getId());
 //			System.out.println(" what does stmt.executeUpdate return? " + stmt.executeUpdate());
 			int rowUpdated = stmt.executeUpdate();
 			if (rowUpdated > 0) {
@@ -54,11 +54,12 @@ public class AccountDaoImp implements AccountDao {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			int statementIndex = 0;
 			
-			String sql = "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE USER_ID = ?";
+			String sql = "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE USER_ID = ? AND ID = ?";
 			
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(++statementIndex, amount);
 			stmt.setInt(++statementIndex, account.getUser_id());
+			stmt.setInt(++statementIndex, account.getId());
 			int rowUpdated = stmt.executeUpdate();
 			if (rowUpdated > 0) {
 				return true;

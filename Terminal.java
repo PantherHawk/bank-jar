@@ -25,35 +25,8 @@ public class Terminal {
 		start();
 		
 //		welcome user to the bank
-		while( scanner.hasNextLine() ) {
-			String s = scanner.nextLine();
-			if (s.startsWith("v") && user.getUser_role() > 0) {
-	//			handle verify users procedure
-				verifyUsers(allUsers);
-			} else if (s.startsWith("m")) {
-	//			handle get all accounts procedure
-				if (user.getIsRegistered() > 0) {
-					manageAccounts(user);
-				} else {
-					System.out.println("You have not yet been registered." + "\n Please try again later!");
-//					TODO: log out and knock 'em to main menu
-				}
-				
-			} else if (s.startsWith("t")) {
-	//			TODO: handle get all transactions for user procedure
-				handleTxOptions();
-				
-			} else if (s.startsWith("h")) {
-//				handle help procedure and print out options again
-				System.out.println(user.getUser_role() > 0 ? ADMIN_TRANSACTIONS : CUSTOMER_TRANSACTIONS);
-//				
-			} else if (s.startsWith("q")) {
-				System.out.println("Thanks for banking with Penny Pinchers! " + "\n Please visit us again!");
-//				handle quit procedure
-//				TODO: knock 'em back to main menu;
-			}
+		goToMainMenu();
 
-		}
 //		otherwise handle no user found in db.
 		if (user.getId() < 1) {
 			System.out.println("It looks liket this is your first time.  Type (j) to get started!");
@@ -111,7 +84,7 @@ public class Terminal {
 			if (UserService.getInstance().verifyUser(toAdd)) { 
 				
 				System.out.println("Verified " + toAdd.getFirstname() + " " + toAdd.getLastname() + " .");
-//				TODO: knock 'em back to main menu
+				goToMainMenu();
 			}
 		}
 		sc.close();
@@ -192,7 +165,7 @@ public class Terminal {
 			if (depositSuccess) {
 				account.setCurr_balance(account.getCurr_balance() + Integer.parseInt(depositAmt));
 				System.out.println("Your current balance in " + account.getName() + " account is $" + account.getCurr_balance() + ".");
-//				TODO: knock 'em back to a main menu.
+				goToMainMenu();
 			}
 		}
 		
@@ -212,7 +185,7 @@ public class Terminal {
 			if (withdrawSuccess) {
 				account.setCurr_balance(account.getCurr_balance() - Integer.parseInt(withdrawalAmt));
 				System.out.println("Transaction success! Enjoy your $" + withdrawalAmt + "\n Don't spend it all in one place!");
-//				TODO: knock 'em back to a main menu.
+				goToMainMenu();
 
 			}
 		}
@@ -261,7 +234,23 @@ public class Terminal {
 			viewAnyoneUsersTxs();
 		} else if (choice.toLowerCase().startsWith("y")) {
 			viewMyTx();
-		} else if (choice.toLowerCase().startsWith("w"))
+		} else if (choice.toLowerCase().startsWith("w")) {
+			viewMyWithdrawalTx();
+		} else if (choice.toLowerCase().startsWith("d")) {
+			viewMyDepositTx();
+		}
+	}
+	public static void viewMyDepositTx() {
+		List<Transaction> allTx = TransactionService.getInstance().getTxsByType(user.getId(), "deposit");
+		for (Transaction tx : allTx) {
+			System.out.println("id: " + tx.getAccount_id() + "   user_id: " + tx.getUser_id() + "   " + tx.getType().toUpperCase() + "    $" + tx.getAmount());
+		}
+	}
+	public static void viewMyWithdrawalTx() {
+		List<Transaction> allTx = TransactionService.getInstance().getTxsByType(user.getId(), "withdrawal");
+		for (Transaction tx : allTx) {
+			System.out.println("id: " + tx.getAccount_id() + "   user_id: " + tx.getUser_id() + "   " + tx.getType().toUpperCase() + "    $" + tx.getAmount());
+		}
 	}
 	public static void viewMyTx() {
 		List<Transaction> allTxBelongingToUser = TransactionService.getInstance().getTxsForUser(allUsers.indexOf(user.getId()));
@@ -272,7 +261,7 @@ public class Terminal {
 	public static void viewAllTx() {
 		if (user.getUser_role() < 1) {
 			System.out.println("user is not an admin.");
-//			TODO: knock 'em to the main menu
+			goToMainMenu();
 		}
 		List<Transaction> allTx = TransactionService.getInstance().getAllTxs();
 		System.out.println("all transaction: " + allTx.toString());
@@ -300,6 +289,36 @@ public class Terminal {
 	}
 	public static void goToMainMenu() {
 		System.out.println("Penny Pinchers bank.");
+		System.out.println(user.getUser_role() > 0 ? ADMIN_TRANSACTIONS : CUSTOMER_TRANSACTIONS);
+		while( scanner.hasNextLine() ) {
+			String s = scanner.nextLine();
+			if (s.startsWith("v") && user.getUser_role() > 0) {
+	//			handle verify users procedure
+				verifyUsers(allUsers);
+			} else if (s.startsWith("m")) {
+	//			handle get all accounts procedure
+				if (user.getIsRegistered() > 0) {
+					manageAccounts(user);
+				} else {
+					System.out.println("You have not yet been registered." + "\n Please try again later!");
+					goToMainMenu();
+				}
+				
+			} else if (s.startsWith("t")) {
+				handleTxOptions();
+			} else if (s.startsWith("e")) {
+				goToMainMenu();
+				
+			} else if (s.startsWith("h")) {
+//				handle help procedure and print out options again
+				System.out.println(user.getUser_role() > 0 ? ADMIN_TRANSACTIONS : CUSTOMER_TRANSACTIONS);
+//				
+			} else if (s.startsWith("q")) {
+				System.out.println("Thanks for banking with Penny Pinchers! " + "\n Please visit us again!");
+//				handle quit procedure
+				System.exit(0);
+			}
+		}
 	}
 	public static boolean isNumber(String s) {
 		try {

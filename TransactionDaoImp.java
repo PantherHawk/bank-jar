@@ -89,8 +89,32 @@ public class TransactionDaoImp implements TransactionDao {
 
 	@Override
 	public List<Transaction> fetchAllDepositsOrWithdrawals(int user_id, String txType) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		int statementIndex = 0;
+		try (Connection connect = ConnectionUtil.getConnection()) {
+			String sql = "SELECT * FROM TRANSACTIONS WHERE USER_ID = ? AND TYPE = ?";
+			PreparedStatement stmt = connect.prepareStatement(sql);
+			stmt.setInt(++statementIndex, user_id);
+			stmt.setString(++statementIndex, txType);
+			ResultSet results = stmt.executeQuery();
+			List<Transaction> transactionList = new ArrayList<>();
+			System.out.println("results of get all tx: " + transactionList.toString());
+			while (results.next()) {
+				transactionList.add(new Transaction(
+						results.getInt("ID"),
+						results.getInt("USER_ID"),
+						results.getInt("ACCOUNT_ID"),
+						results.getTimestamp("TIME_STAMP"),
+						results.getString("TYPE"),
+						results.getInt("AMOUNT")
+						));
+			}
+			return transactionList;
+		} catch(SQLException | ClassNotFoundException e) {
+//			TODO: logging
+			e.printStackTrace();
+		}
+		return new ArrayList<Transaction>();
 	}
 	
 }
