@@ -144,7 +144,7 @@ public class UserDaoImp implements UserDao {
 			
 			List<User> userList = new ArrayList<>();
 			while(result.next()) {
-				System.out.println("Building list of users.");
+//				System.out.println("Building list of users.");
 				userList.add(new User(
 						result.getInt("USER_ID"),
 						result.getInt("ROLE_ID"),

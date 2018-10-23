@@ -158,8 +158,46 @@ public class Terminal {
 			manageAccounts(user);
 		}
 		account = allMyAccounts.get(Integer.parseInt(chose));
-		System.out.println("You chose account  named: " + account.getName());
+//		TODO: get transaction history
+//		TODO: make a deposit with chosen account
+		withdrawOrDeposit();
+		
+		
 	}
+	public static void withdrawOrDeposit() {
+		System.out.println("You chose account  named: " + account.getName() + 
+				"/n make a (w)ithdrawal or a (d)eposit.");
+		String accountAction = scanner.nextLine();
+		if (accountAction.toLowerCase().startsWith("w")) {
+//			TODO: make a withdrawal with chosen account
+			withdrawalProcedure();
+		} else if (accountAction.toLowerCase().startsWith("d")) {
+//			TODO: handle deposits
+			;
+		} else if (!accountAction.toLowerCase().startsWith("d") || !accountAction.toLowerCase().startsWith("w")) {
+			withdrawOrDeposit();
+		}
+	}
+	
+	public static void withdrawalProcedure() {
+		System.out.println("How much do you want to withdraw?");
+		String withdrawalAmt = scanner.nextLine();
+		if (!isNumber(withdrawalAmt)) {
+			System.out.println("That's not a number!");
+			withdrawalProcedure();
+		}
+		if (account.getCurr_balance() < Integer.parseInt(withdrawalAmt)) {
+			System.out.println("You don't have enough money in the account to withdraw $" + withdrawalAmt);
+			withdrawalProcedure();
+		} else {
+//			TODO: do the withdrawal
+			boolean withdrawSuccess = AccountSerivce.getInstance().withdraw(account, Integer.parseInt(withdrawalAmt));
+			if (withdrawSuccess) {
+				System.out.println("Transaction success! Enjoy your $" + withdrawalAmt + "\n don't spend it all in one place!");
+			}
+		}
+	}
+	
 	public static void handleNewUser() {
 		System.out.println("It doesn't look you have an account yet. \n" + 
 								" Press 0 to log in again or 1 to create a new account.");
@@ -177,6 +215,7 @@ public class Terminal {
 			System.out.println("what is addUserSuccess ? " + addUserSuccess);
 			if (addUserSuccess) {
 				System.out.println(" Welcome to the Penny Pinchers family!");
+				start();
 			} else {
 				System.out.println("Something went wrong, we could not add you to the DB...");
 			}
@@ -184,6 +223,16 @@ public class Terminal {
 //			scanner.close();
 			start();
 		}
+	}
+	public static boolean isNumber(String s) {
+		try {
+			Integer.parseInt(s);
+		} catch(NumberFormatException e) {
+			return false;
+		} catch(Exception e) {
+			return false;
+		}
+		return true;
 	}
 	public static Scanner scanner = null;
 	public static User user = null;

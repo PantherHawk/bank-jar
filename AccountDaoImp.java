@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 //import java.util.Currency;
@@ -30,13 +31,15 @@ public class AccountDaoImp implements AccountDao {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			int statementIndex = 0;
 			
-			String sql = "UPDATE user_accounts SET BALANCE=BALANCE - ? WHERE USER_ID= ?";
+			String sql = "UPDATE ACCOUNT SET BALANCE = BALANCE - ? WHERE USER_ID = ?";
 			
-			CallableStatement cs = conn.prepareCall(sql);
-			cs.setInt(++statementIndex, amount);
-			cs.setInt(++statementIndex, account.getUser_id());
+			PreparedStatement stmt  = conn.prepareStatement(sql);
+			stmt.setInt(++statementIndex, amount);
+			stmt.setInt(++statementIndex, account.getUser_id());
 			
-			if (cs.execute()) {
+//			System.out.println(" what does stmt.executeUpdate return? " + stmt.executeUpdate());
+			int rowUpdated = stmt.executeUpdate();
+			if (rowUpdated > 0) {
 				return true;
 			}
 			
