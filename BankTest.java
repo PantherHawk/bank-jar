@@ -17,7 +17,7 @@ public class BankTest {
 //	}
 
 //	MVP
-	/*Test: no login creds, create user name and password*/
+	/*Test: no login creds, create user name and password* / 
 	@Test
 	/*Test: login, with mocks, create username --> BIP 32 phrase as username/password*/
 	/**/

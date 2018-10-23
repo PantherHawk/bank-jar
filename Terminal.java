@@ -33,26 +33,24 @@ public class Terminal {
 				if (user.getIsRegistered() > 0) {
 					manageAccounts(user);
 				} else {
-					System.out.println("You have not yet been registered.");
+					System.out.println("You have not yet been registered." + "\n Please try again later!");
+//					TODO: log out and knock 'em to main menu
 				}
 				
 			} else if (s.startsWith("t")) {
-	//			handle get all transactions for user procedure
+	//			TODO: handle get all transactions for user procedure
 			} else if (s.startsWith("h")) {
 //				handle help procedure and print out options again
 				System.out.println(user.getUser_role() > 0 ? ADMIN_TRANSACTIONS : CUSTOMER_TRANSACTIONS);
-//				TO DO
-				if (user.getUser_role() > 0) {
-					System.out.println(ADMIN_TRANSACTIONS);
-				} else {
-					System.out.println(CUSTOMER_TRANSACTIONS);
-				}
+//				
 			} else if (s.startsWith("q")) {
+				System.out.println("Thanks for banking with Penny Pinchers! " + "\n Please visit us again!");
 //				handle quit procedure
-//				TO DO: 
+//				TODO: knock 'em back to main menu;
 			}
-//		otherwise handle no user found in db.
+
 		}
+//		otherwise handle no user found in db.
 		if (user.getId() < 1) {
 			System.out.println("It looks liket this is your first time.  Type (j) to get started!");
 //			add new user program
@@ -108,6 +106,7 @@ public class Terminal {
 			if (UserService.getInstance().verifyUser(toAdd)) { 
 				
 				System.out.println("Verified " + toAdd.getFirstname() + " " + toAdd.getLastname() + " .");
+//				TODO: knock 'em back to main menu
 			}
 		}
 		sc.close();
@@ -129,22 +128,22 @@ public class Terminal {
 //		TODO: logout and log back in.
 		
 		System.out.println(user.toString());
-		System.out.println(user.getUser_role() > 0 ? "Welcome admin!" : "Welcome " + user.getFirstname());
+		System.out.println(user.getUser_role() > 0 ? "Welcome admin!" : "Welcome " + user.getFirstname() + " " + user.getLastname());
 		checkAdminStatus(user);
 		System.out.println(user.getUser_role() > 0 ? 
 				"Press (v) to verify users, (m) to manage your accounts, or (t) to view your transactions." : 
 					"Press (m) to manage your accounts, or (t) to view your transactions."
 			);
-//		if user in db, return user info.
 		return scanner;
 	}
 	public static void manageAccounts(User user) {
 //		get list of accounts
 		List<Account> allMyAccounts = AccountSerivce.getInstance().getAccount(user);
 		if (allMyAccounts.isEmpty()) {
-			System.out.println("It doesn't look like you have any accounts yet. \n Add your first account!");
+			System.out.println("It doesn't look like you have any accounts yet." + 
+									"\n Add your first account!");
 //			add an account
-//			
+			
 		}
 		for (int i=0; i < allMyAccounts.size(); i++) {
 			Account myAccount = allMyAccounts.get(i);
@@ -159,7 +158,6 @@ public class Terminal {
 		}
 		account = allMyAccounts.get(Integer.parseInt(chose));
 //		TODO: get transaction history
-//		TODO: make a deposit with chosen account
 		withdrawOrDeposit();
 		
 		
@@ -188,7 +186,7 @@ public class Terminal {
 			System.out.println("what is deposit success?   --->" + depositSuccess);
 			if (depositSuccess) {
 				account.setCurr_balance(account.getCurr_balance() + Integer.parseInt(depositAmt));
-				System.out.println("Your current deposit is " + account.getCurr_balance());
+				System.out.println("Your current balance in " + account.getName() + " account is $" + account.getCurr_balance() + ".");
 //				TODO: knock 'em back to a main menu.
 			}
 		}
@@ -208,7 +206,7 @@ public class Terminal {
 			boolean withdrawSuccess = AccountSerivce.getInstance().withdraw(account, Integer.parseInt(withdrawalAmt));
 			if (withdrawSuccess) {
 				account.setCurr_balance(account.getCurr_balance() - Integer.parseInt(withdrawalAmt));
-				System.out.println("Transaction success! Enjoy your $" + withdrawalAmt + "\n don't spend it all in one place!");
+				System.out.println("Transaction success! Enjoy your $" + withdrawalAmt + "\n Don't spend it all in one place!");
 //				TODO: knock 'em back to a main menu.
 
 			}
@@ -219,11 +217,12 @@ public class Terminal {
 		System.out.println("It doesn't look you have an account yet. \n" + 
 								" Press 0 to log in again or 1 to create a new account.");
 		String pressed = scanner.nextLine();
+		System.out.println("You chose: " + pressed);
 		if (!isNumber(pressed)) {
 			System.out.println("That wasn't a 0 or a 1!");
 			handleNewUser();
 		}
-		if (Integer.parseInt(scanner.nextLine()) != 0) {
+		if (Integer.parseInt(pressed) != 0) {
 //			create a new account
 			System.out.println("Great! Let's get started. \n Please enter your first name.");
 			String firstName = scanner.nextLine();
@@ -245,6 +244,9 @@ public class Terminal {
 //			scanner.close();
 			start();
 		}
+	}
+	public static void goToMainMenu() {
+		System.out.println("Penny Pinchers bank.");
 	}
 	public static boolean isNumber(String s) {
 		try {
