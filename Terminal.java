@@ -113,9 +113,9 @@ public class Terminal {
 		sc.close();
 	}
 	public static Scanner start() {
-		scanner = new Scanner(System.in);
 		System.out.println("Welcome to the penny pincher's bank!");
 		System.out.println("Please enter your username.");
+		scanner = new Scanner(System.in);
 		String username = scanner.nextLine();
 		System.out.println("Please enter your unique password.");
 		String passhash = scanner.nextLine();	
@@ -126,7 +126,7 @@ public class Terminal {
 		while (user.getId() == 0) {
 			handleNewUser();
 		}
-		
+//		TODO: logout and log back in.
 		
 		System.out.println(user.toString());
 		System.out.println(user.getUser_role() > 0 ? "Welcome admin!" : "Welcome " + user.getFirstname());
@@ -172,13 +172,26 @@ public class Terminal {
 //			TODO: make a withdrawal with chosen account
 			withdrawalProcedure();
 		} else if (accountAction.toLowerCase().startsWith("d")) {
-//			TODO: handle deposits
+			depositProcedure();
 			;
 		} else if (!accountAction.toLowerCase().startsWith("d") || !accountAction.toLowerCase().startsWith("w")) {
 			withdrawOrDeposit();
 		}
 	}
-	
+	public static void depositProcedure() {
+		System.out.println("How much do you want to deposit?");
+		String depositAmt = scanner.nextLine();
+		if (!isNumber(depositAmt)) {
+			System.out.println("That's not a number!");
+		} else {
+			boolean depositSuccess = AccountSerivce.getInstance().deposit(account, Integer.parseInt(depositAmt));
+			System.out.println("what is deposit success?   --->" + depositSuccess);
+			if (depositSuccess) {
+				account.setCurr_balance(account.getCurr_balance() + Integer.parseInt(depositAmt));
+			}
+		}
+		
+	}
 	public static void withdrawalProcedure() {
 		System.out.println("How much do you want to withdraw?");
 		String withdrawalAmt = scanner.nextLine();
@@ -190,9 +203,9 @@ public class Terminal {
 			System.out.println("You don't have enough money in the account to withdraw $" + withdrawalAmt);
 			withdrawalProcedure();
 		} else {
-//			TODO: do the withdrawal
 			boolean withdrawSuccess = AccountSerivce.getInstance().withdraw(account, Integer.parseInt(withdrawalAmt));
 			if (withdrawSuccess) {
+				account.setCurr_balance(account.getCurr_balance() - Integer.parseInt(withdrawalAmt));
 				System.out.println("Transaction success! Enjoy your $" + withdrawalAmt + "\n don't spend it all in one place!");
 			}
 		}

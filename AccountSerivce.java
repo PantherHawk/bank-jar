@@ -27,8 +27,8 @@ public class AccountSerivce {
 
 		
 	}
-	public Account deposit(User user, int amount) {
-		return null;
+	public boolean deposit(Account account, int amount) {
+		return AccountDaoImp.getInstance().deposit(account, amount);
 	}
 	public List<Account> viewAllAccounts(User user) {
 		return new ArrayList<>();
