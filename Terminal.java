@@ -50,7 +50,7 @@ public class Terminal {
 	public static void checkAdminStatus(User user) {
 		System.out.println("user role id: " + user.getUser_role());
 		if (user.getUser_role() > 0) {
-			System.out.println("Welcome admin privelaged user!");
+			System.out.println("\\033[0;1m" + " Welcome admin privelaged user!");
 			System.out.println(" Here are your pending users.");
 			final List<User> userList = UserService.getInstance().getAllUsers();
 			final List<User> verifiedUsers = new ArrayList<User>();
@@ -76,17 +76,18 @@ public class Terminal {
 			System.out.println("id: " + users.indexOf(user) + " " + user.getFirstname() + " " + user.getLastname());
 		}
 		System.out.println(" Type the id of the user you want to verify!");
-		String s = sc.nextLine();
-		String[] ids = s.split("");
-		for (String id : ids) {
-			User toAdd = users.get(Integer.parseInt(id));
-			System.out.println("Adding user: " + users.get(Integer.parseInt(id)));
-			if (UserService.getInstance().verifyUser(toAdd)) { 
-				
-				System.out.println("Verified " + toAdd.getFirstname() + " " + toAdd.getLastname() + " .");
-				goToMainMenu();
-			}
+		int id = sc.nextInt();
+//		String[] ids = s.split("");
+		User toAdd = users.get(id);
+		System.out.println("Adding user: " + users.get(id));
+		if (UserService.getInstance().verifyUser(toAdd)) { 
+			
+			System.out.println("Verified " + toAdd.getFirstname() + " " + toAdd.getLastname() + " .");
+			goToMainMenu();
 		}
+//		for (String id : ids) {
+//			
+//		}
 		sc.close();
 	}
 	public static Scanner start() {

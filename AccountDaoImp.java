@@ -5,15 +5,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+//import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.log4j.Logger;
 //import java.util.Currency;
 
 public class AccountDaoImp implements AccountDao {
-	
+	final static Logger logger = Logger.getLogger(UserDaoImp.class);
+
 	private static AccountDaoImp accountDaoImp;
-//	final static Logger logger = Logger.getLogger(UserDaoImp.class);
 //	set up the singleton
 	public static AccountDaoImp getInstance() {
 		if (accountDaoImp == null) {
@@ -44,6 +45,7 @@ public class AccountDaoImp implements AccountDao {
 			}
 			
 		} catch(SQLException | ClassNotFoundException e) {
+			logger.error("Erred with ----->" + e);
 			e.printStackTrace();
 		}
 		return false;
@@ -66,6 +68,7 @@ public class AccountDaoImp implements AccountDao {
 			}
 			
 		} catch(SQLException | ClassNotFoundException e) {
+			logger.error("Erred with ----->" + e);
 			e.printStackTrace();
 		}
 		return false;

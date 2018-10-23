@@ -10,10 +10,11 @@ import java.util.List;
 
 //import com.revature.goodbye.ConnectionUtil;
 
-//import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
 
 public class UserDaoImp implements UserDao {
-	
+	final static Logger log = Logger.getLogger(UserDaoImp.class);
+
 	private static UserDaoImp userDaoImp;
 //	final static Logger logger = Logger.getLogger(UserDaoImp.class);
 //	set up the singleton
@@ -42,9 +43,10 @@ public class UserDaoImp implements UserDao {
 				return true;
 			}
 		} catch(SQLException e) {
-			System.out.println("Erred with  -----> " + e);
+			log.error("Erred with  -----> " + e);
 			e.printStackTrace();
 		} catch (ClassNotFoundException e1) {
+			log.error("Erred with  -----> " + e1);
 			e1.printStackTrace();
 		}
 		return false;
@@ -63,13 +65,14 @@ public class UserDaoImp implements UserDao {
 			cs.setString(++statementIndex, user.getPasshash());
 			int i = cs.executeUpdate();
 			if (i > 0) {
-				System.out.println("add user to db success.");
+				log.info("success: " + user.getUsername() + " added user to db.");
 				return true;
 			}
 		} catch(SQLException e) {
-			System.out.println("Erred with  -----> " + e);
+			log.error("Erred with  -----> " + e);
 			e.printStackTrace();
 		} catch (ClassNotFoundException e1) {
+			log.error("Erred with  -----> " + e1);
 			e1.printStackTrace();
 		}
 		return false;
@@ -93,12 +96,12 @@ public class UserDaoImp implements UserDao {
 			cs.setString(++statementIndex, user.getPasshash());
 			
 			int i = cs.executeUpdate();
-			System.out.println("what is i in userdaoim?" + i);
+//			System.out.println("what is i in userdaoim?" + i);
 			if (i == 0) {
 				return true;
 			}
 		} catch(SQLException | ClassNotFoundException e) {
-			System.out.println("Erred with  -----> " + e);
+			log.error("Erred with  -----> " + e);
 			e.printStackTrace();
 		}	return false;
 	}
@@ -107,13 +110,13 @@ public class UserDaoImp implements UserDao {
 	public User select(User user) {
 		try(Connection conn = ConnectionUtil.getConnection()) {
 			int statementIndx = 0;
-			System.out.println(user.toString());
-			System.out.println("running from select method.");
+//			System.out.println(user.toString());
+			log.info("Preparing DQL ...");
 			String sql = "SELECT * FROM USERS WHERE USERNAME = ?";
 			
 			PreparedStatement p = conn.prepareStatement(sql);
 			p.setString(++statementIndx, user.getUsername());
-			System.out.println("username is " + user.getUsername());
+//			System.out.println("username is " + user.getUsername());
 			ResultSet result = p.executeQuery();
 //			System.out.println("result from select query: " + result.getString(1));
 			while (result.next()) {
@@ -129,7 +132,7 @@ public class UserDaoImp implements UserDao {
 						);
 			}
 		} catch(SQLException | ClassNotFoundException e) {
-			System.out.println("Erred with ------>" + e);
+			log.error("Erred with  -----> " + e);
 			e.printStackTrace();
 		}
 		return new User();
@@ -138,6 +141,7 @@ public class UserDaoImp implements UserDao {
 	@Override
 	public List<User> selectAll() {
 		try(Connection conn = ConnectionUtil.getConnection()) {
+			log.info("Preparing DQL statement ...");
 			String sql = "SELECT * FROM USERS";
 			PreparedStatement p = conn.prepareStatement(sql);
 			ResultSet result = p.executeQuery();
@@ -173,6 +177,7 @@ public class UserDaoImp implements UserDao {
 			}
 			System.out.println(user.getFirstname() + " " + user.getLastname() + " updated and verified.");
 		} catch (SQLException | ClassNotFoundException e) {
+			log.error("Erred with ------->" + e);
 			e.printStackTrace();
 		}
 	
@@ -191,10 +196,11 @@ public class UserDaoImp implements UserDao {
 			ResultSet result = p.executeQuery();
 			
 			if (result.next()) {
-				System.out.println("Result is -------> " + result.getString(1));
+//				System.out.println("Result is -------> " + result.getString(1));
 				return result.getString(1);
 			}
 		} catch (SQLException | ClassNotFoundException e) {
+			log.error("Erred with ------->" + e);
 			e.printStackTrace();
 		}
 	return new String();

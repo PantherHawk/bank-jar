@@ -1,9 +1,12 @@
 package com.pennypincherbank.Bank;
 
 import java.util.List;
+import org.apache.log4j.Logger;
+
 
 public class UserService {
-	
+	final static Logger log = Logger.getLogger(UserService.class);
+
 //	set up singleton
 	private static UserService userService;
 	private UserService() {
@@ -34,15 +37,14 @@ public class UserService {
 	public User login(User user) {
 //		get user info w/o validation
 		User attempt = UserDaoImp.getInstance().select(user);
-//		System.out.println("attempt: " + attempt);
 //		login protocol: we hash the user input, which returns a hash, 
 //		and we match that to the one stored in the db
-		System.out.println("user passhash ====>" + attempt.getPasshash());
+		log.info("HASH ====>" + attempt.getPasshash());
 		if (UserDaoImp.getInstance().getUserHash(attempt).equals(UserDaoImp.getInstance().getUserHash(user))) {
-			System.out.println("login success");
+			log.info("login success");
 			return attempt;
 		}
-		System.out.println("login failed.");
+		log.info("login failed.");
 //		create user program
 		return new User();
 	}
