@@ -54,7 +54,7 @@ public class AccountDaoImp implements AccountDao {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			int statementIndex = 0;
 			
-			String sql = "UPDATE user_accounts SET BALANCE = BALANCE + ? WHERE USER_ID = ?";
+			String sql = "UPDATE ACCOUNT SET BALANCE = BALANCE + ? WHERE USER_ID = ?";
 			
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(++statementIndex, amount);

@@ -173,7 +173,7 @@ public class Terminal {
 			withdrawalProcedure();
 		} else if (accountAction.toLowerCase().startsWith("d")) {
 			depositProcedure();
-			;
+			
 		} else if (!accountAction.toLowerCase().startsWith("d") || !accountAction.toLowerCase().startsWith("w")) {
 			withdrawOrDeposit();
 		}
@@ -188,6 +188,8 @@ public class Terminal {
 			System.out.println("what is deposit success?   --->" + depositSuccess);
 			if (depositSuccess) {
 				account.setCurr_balance(account.getCurr_balance() + Integer.parseInt(depositAmt));
+				System.out.println("Your current deposit is " + account.getCurr_balance());
+//				TODO: knock 'em back to a main menu.
 			}
 		}
 		
@@ -207,6 +209,8 @@ public class Terminal {
 			if (withdrawSuccess) {
 				account.setCurr_balance(account.getCurr_balance() - Integer.parseInt(withdrawalAmt));
 				System.out.println("Transaction success! Enjoy your $" + withdrawalAmt + "\n don't spend it all in one place!");
+//				TODO: knock 'em back to a main menu.
+
 			}
 		}
 	}
@@ -214,6 +218,11 @@ public class Terminal {
 	public static void handleNewUser() {
 		System.out.println("It doesn't look you have an account yet. \n" + 
 								" Press 0 to log in again or 1 to create a new account.");
+		String pressed = scanner.nextLine();
+		if (!isNumber(pressed)) {
+			System.out.println("That wasn't a 0 or a 1!");
+			handleNewUser();
+		}
 		if (Integer.parseInt(scanner.nextLine()) != 0) {
 //			create a new account
 			System.out.println("Great! Let's get started. \n Please enter your first name.");
