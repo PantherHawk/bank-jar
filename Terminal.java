@@ -173,7 +173,8 @@ public class Terminal {
 			String username = scanner.nextLine();
 			System.out.println(" And please enter a password.");
 			String password = scanner.nextLine();
-			Boolean addUserSuccess = UserService.getInstance().addUser(new User(0, 0, 0, username, password, firstName, lastName));
+			Boolean addUserSuccess = UserService.getInstance().addUserSecure(new User(0, 0, 0, username, password, firstName, lastName));
+			System.out.println("what is addUserSuccess ? " + addUserSuccess);
 			if (addUserSuccess) {
 				System.out.println(" Welcome to the Penny Pinchers family!");
 			} else {

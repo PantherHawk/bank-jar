@@ -61,8 +61,8 @@ public class UserDaoImp implements UserDao {
 			cs.setString(++statementIndex, user.getLastname());
 			cs.setString(++statementIndex, user.getUsername());
 			cs.setString(++statementIndex, user.getPasshash());
-			
-			if (cs.execute()) {
+			int i = cs.executeUpdate();
+			if (i > 0) {
 				System.out.println("add user to db success.");
 				return true;
 			}
@@ -84,15 +84,17 @@ public class UserDaoImp implements UserDao {
 	@Override
 	public boolean insertProcedure(User user) {
 		try (Connection connect = ConnectionUtil.getConnection()) {
-			String storedProc = "CALL add_user (?, ?)";
 			int statementIndex = 0;
-//			String firstName = "test";
-//			String lastName = "test";
-			CallableStatement cs = connect.prepareCall(storedProc);
+			String sql = "CALL ADD_USER (0, 0, ?, ?, ?, ?)";
+			CallableStatement cs = connect.prepareCall(sql);
+			cs.setString(++statementIndex, user.getFirstname());
+			cs.setString(++statementIndex, user.getLastname());
+			cs.setString(++statementIndex, user.getUsername());
+			cs.setString(++statementIndex, user.getPasshash());
 			
-			cs.setString(++statementIndex, user.getUsername().toUpperCase());
-			cs.setString(++statementIndex, user.getPasshash().toUpperCase());
-			if (cs.execute()) {
+			int i = cs.executeUpdate();
+			System.out.println("what is i in userdaoim?" + i);
+			if (i == 0) {
 				return true;
 			}
 		} catch(SQLException | ClassNotFoundException e) {
