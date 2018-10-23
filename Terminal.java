@@ -4,6 +4,7 @@ package com.pennypincherbank.Bank;
 //import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 //import java.io.PrintWriter;
@@ -12,16 +13,17 @@ import java.util.Scanner;
 
 //import org.apache.log4j.BasicConfigurator;
 
-//import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
 
 public class Terminal {
 //	private static Logger logger = Logger.getLogger("Terminal");
 
-	
+	final static Logger log = Logger.getLogger(Terminal.class);
 	public static void main(String[] args) throws IOException {
 //		BasicConfigurator.configure();
 	
 		start();
+		
 //		welcome user to the bank
 		while( scanner.hasNextLine() ) {
 			String s = scanner.nextLine();
@@ -39,6 +41,8 @@ public class Terminal {
 				
 			} else if (s.startsWith("t")) {
 	//			TODO: handle get all transactions for user procedure
+				handleTxOptions();
+				
 			} else if (s.startsWith("h")) {
 //				handle help procedure and print out options again
 				System.out.println(user.getUser_role() > 0 ? ADMIN_TRANSACTIONS : CUSTOMER_TRANSACTIONS);
@@ -62,11 +66,12 @@ public class Terminal {
 	}
 	private static final String CUSTOMER_TRANSACTIONS = 
 			"	Customer transactions: " +
-					"(d)eposit, (w)ithdraw, (t)ransfer, (b)alance, (q)uit, (h)elp.";
+					"(d)eposit, (w)ithdraw, (t)ransactions, (b)alance, (q)uit, (h)elp.";
 	private static final String ADMIN_TRANSACTIONS = 
 			"	Admin options: " +
-					"(v)erify users, view (t)ransactions, view (a)ll users, (q)uit, (h)elp." + CUSTOMER_TRANSACTIONS;
-	
+					"(v)erify users, view (t)ransacutions, view (a)ll users, (q)uit, (h)elp." + CUSTOMER_TRANSACTIONS;
+	public static final String ADMIN_TX_OPTIONS = "  Admin transaction options: " +
+					"view (a)ll account transactions, view (y)our transactions, view (w)ithdrawal transactions, view (d)eposit transactions, vi(e)w transactions by date.";
 	public static List<User> allUsers = UserService.getInstance().getAllUsers();
 	
 	public static void checkAdminStatus(User user) {
@@ -112,6 +117,7 @@ public class Terminal {
 		sc.close();
 	}
 	public static Scanner start() {
+		log.info("Starting application...");
 		System.out.println("Welcome to the penny pincher's bank!");
 		System.out.println("Please enter your username.");
 		scanner = new Scanner(System.in);
@@ -119,7 +125,7 @@ public class Terminal {
 		System.out.println("Please enter your unique password.");
 		String passhash = scanner.nextLine();	
 //		look up in db to find user 
-		System.out.println("Trying to log in ...");
+		log.info("Trying to log in with username " + username + " and password " + passhash);
 		user = UserService.getInstance().login(new User(username, passhash));
 		System.out.println("user is   " + user);
 		while (user.getId() == 0) {
@@ -167,7 +173,6 @@ public class Terminal {
 				"/n make a (w)ithdrawal or a (d)eposit.");
 		String accountAction = scanner.nextLine();
 		if (accountAction.toLowerCase().startsWith("w")) {
-//			TODO: make a withdrawal with chosen account
 			withdrawalProcedure();
 		} else if (accountAction.toLowerCase().startsWith("d")) {
 			depositProcedure();
@@ -245,6 +250,54 @@ public class Terminal {
 			start();
 		}
 	}
+	public static void handleTxOptions() {
+		System.out.println(ADMIN_TX_OPTIONS);
+		String choice = scanner.next();
+		if (choice.toLowerCase().equals("a")) {
+			System.out.println("clicked a...");
+			//a, y, w, d, e
+			viewAllTx();
+		} else if (choice.toLowerCase().equals("u")) {
+			viewAnyoneUsersTxs();
+		} else if (choice.toLowerCase().startsWith("y")) {
+			viewMyTx();
+		} else if (choice.toLowerCase().startsWith("w"))
+	}
+	public static void viewMyTx() {
+		List<Transaction> allTxBelongingToUser = TransactionService.getInstance().getTxsForUser(allUsers.indexOf(user.getId()));
+		for (Transaction tx : allTxBelongingToUser) {
+			System.out.println("id: " + tx.getAccount_id() + "   user_id: " + tx.getUser_id() + "   " + tx.getType().toUpperCase() + "    $" + tx.getAmount());
+		}
+	}
+	public static void viewAllTx() {
+		if (user.getUser_role() < 1) {
+			System.out.println("user is not an admin.");
+//			TODO: knock 'em to the main menu
+		}
+		List<Transaction> allTx = TransactionService.getInstance().getAllTxs();
+		System.out.println("all transaction: " + allTx.toString());
+		for (Transaction tx : allTx) {
+			System.out.println("id: " + tx.getAccount_id() + "   user_id: " + tx.getUser_id() + "   " + tx.getType().toUpperCase() + "    $" + tx.getAmount());
+		}
+	}
+	public static void viewAnyoneUsersTxs() {
+		if (user.getUser_role() < 1) {
+			System.out.println("user is not an admin.");
+//			TODO: knock 'em to the main menu
+		}
+		System.out.println("Whose transactions would you like to view?"); 
+		displayAllUsers();
+		System.out.println("Select the id of the user for whom you would like to view transactions.");
+		Integer select = Integer.parseInt(scanner.next());
+		if (select > allUsers.size() || select < 0) {
+			System.out.println("Selection out of range.");
+			viewAnyoneUsersTxs();
+		}
+		List<Transaction> allTxBelongingToUser = TransactionService.getInstance().getTxsForUser(allUsers.indexOf(select));
+		for (Transaction tx : allTxBelongingToUser) {
+			System.out.println("id: " + tx.getAccount_id() + "   user_id: " + tx.getUser_id() + "   " + tx.getType().toUpperCase() + "    $" + tx.getAmount());
+		}
+	}
 	public static void goToMainMenu() {
 		System.out.println("Penny Pinchers bank.");
 	}
@@ -257,6 +310,11 @@ public class Terminal {
 			return false;
 		}
 		return true;
+	}
+	public static void displayAllUsers() {
+		for (User user : allUsers) {
+			System.out.println("id: " + allUsers.indexOf(user) + " " + user.getFirstname() + " " + user.getLastname());
+		}
 	}
 	public static Scanner scanner = null;
 	public static User user = null;
