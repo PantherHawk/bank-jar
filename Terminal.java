@@ -242,6 +242,7 @@ public class Terminal {
 	}
 	public static void viewMyDepositTx() {
 		List<Transaction> allTx = TransactionService.getInstance().getTxsByType(user.getId(), "deposit");
+		
 		for (Transaction tx : allTx) {
 			System.out.println("id: " + tx.getAccount_id() + "   user_id: " + tx.getUser_id() + "   " + tx.getType().toUpperCase() + "    $" + tx.getAmount());
 		}
