@@ -39,10 +39,10 @@ public class Terminal {
 	}
 	private static final String CUSTOMER_TRANSACTIONS = 
 			"	Customer transactions: " +
-					"(d)eposit, (w)ithdraw, (t)ransactions, (b)alance, (q)uit, (h)elp.";
+					"(a)dd new account, (d)eposit, (w)ithdraw, (t)ransactions, (b)alance, (q)uit, (h)elp.";
 	private static final String ADMIN_TRANSACTIONS = 
 			"	Admin options: " +
-					"(v)erify users, view (t)ransacutions, view (a)ll users, (q)uit, (h)elp." + CUSTOMER_TRANSACTIONS;
+					"(v)erify users, view (t)ransacutions, view (a)ll users, (q)uit, (h)elp.";
 	public static final String ADMIN_TX_OPTIONS = "  Admin transaction options: " +
 					"view (a)ll account transactions, view (y)our transactions, view (w)ithdrawal transactions, view (d)eposit transactions, vi(e)w transactions by date.";
 	public static List<User> allUsers = UserService.getInstance().getAllUsers();
@@ -108,7 +108,7 @@ public class Terminal {
 //		TODO: logout and log back in.
 		
 		System.out.println(user.toString());
-		System.out.println(user.getUser_role() > 0 ? "Welcome admin!" : "Welcome " + user.getFirstname() + " " + user.getLastname());
+		System.out.println(user.getUser_role() > 0 ? "Welcome " + user.getFirstname() + "  " + user.getLastname() +" you have admin privelages!" : "Welcome " + user.getFirstname() + " " + user.getLastname() + "!");
 		checkAdminStatus(user);
 		System.out.println(user.getUser_role() > 0 ? 
 				"Press (v) to verify users, (m) to manage your accounts, or (t) to view your transactions." : 
@@ -116,28 +116,46 @@ public class Terminal {
 			);
 		return scanner;
 	}
+	public static void makeNewAccount() {
+		System.out.println("Give the account a name, e.g. 'checking' or 'savings'.");
+		String name = scanner.nextLine();
+		System.out.println("How much money do you want to open the account with?");
+		int startBalance = scanner.nextInt();
+		boolean addAccountSuccess = AccountSerivce.getInstance().addAccount(new Account(user.getId(), startBalance, name));
+		if (addAccountSuccess) {
+			System.out.println("Your account has been added!");
+			goToMainMenu();
+		} else {
+			System.out.println("We were unable to add your account.");
+			goToMainMenu();
+		}
+	}
 	public static void manageAccounts(User user) {
 //		get list of accounts
 		List<Account> allMyAccounts = AccountSerivce.getInstance().getAccount(user);
 		if (allMyAccounts.isEmpty()) {
 			System.out.println("It doesn't look like you have any accounts yet." + 
 									"\n Add your first account!");
-//			add an account
+			makeNewAccount();
 			
+			 
 		}
 		for (int i=0; i < allMyAccounts.size(); i++) {
 			Account myAccount = allMyAccounts.get(i);
 			System.out.println(" \n Press " + i + " to deposit or withdraw from your " + myAccount.getName() + 
 					" account " + "\n current balance: " + myAccount.getCurr_balance());
 		}
+		System.out.println("Or (a)dd a new account.");
 		String chose = scanner.nextLine();
 //		handle not in range case, like chose 10 and there are only 2 accounts
+		if (chose.startsWith("a")) {
+			makeNewAccount();
+		}
 		if (Integer.parseInt(chose) > allMyAccounts.size() || Integer.parseInt(chose) < 0) {
 			System.out.println("Sorry, that account doesn't exist. \n");
 			manageAccounts(user);
 		}
 		account = allMyAccounts.get(Integer.parseInt(chose));
-//		TODO: get transaction history
 		withdrawOrDeposit();
 		
 		
@@ -274,7 +292,7 @@ public class Terminal {
 	public static void viewAnyoneUsersTxs() {
 		if (user.getUser_role() < 1) {
 			System.out.println("user is not an admin.");
-//			TODO: knock 'em to the main menu
+			goToMainMenu();
 		}
 		System.out.println("Whose transactions would you like to view?"); 
 		displayAllUsers();

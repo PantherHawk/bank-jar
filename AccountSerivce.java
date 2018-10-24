@@ -17,21 +17,27 @@ public class AccountSerivce {
 	
 	private AccountSerivce() {
 		
-	}	
+	}
+	
 	public List<Account> getAccount(User user) {
 		return AccountDaoImp.getInstance().selectAll(user);
 	}
+	
 	public boolean withdraw(Account account, int amount) {
 //		currently testing,
 		return AccountDaoImp.getInstance().withdraw(account, amount);
-
-		
 	}
+	
 	public boolean deposit(Account account, int amount) {
 		return AccountDaoImp.getInstance().deposit(account, amount);
 	}
+	
 	public List<Account> viewAllAccounts(User user) {
 		return new ArrayList<>();
+	}
+	
+	public boolean addAccount(Account account) {
+		return AccountDaoImp.getInstance().addAccount(account);
 	}
 	
 }

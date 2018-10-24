@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 //import java.util.Currency;
 
 public class AccountDaoImp implements AccountDao {
-	final static Logger logger = Logger.getLogger(UserDaoImp.class);
+	final static Logger logger = Logger.getLogger(AccountDaoImp.class);
 
 	private static AccountDaoImp accountDaoImp;
 //	set up the singleton
@@ -88,7 +88,22 @@ public class AccountDaoImp implements AccountDao {
 
 	@Override
 	public boolean addAccount(Account account) {
-		// TODO Auto-generated method stub
+		int statementIndex = 0;
+		try (Connection connect = ConnectionUtil.getConnection()) {
+//			balance in number, u_id in varchar2, acct_type in varchar2
+			String sql = "CALL ADD_USER_ACCOUNT(?, ?, ?)";
+			PreparedStatement stmt = connect.prepareStatement(sql);
+			stmt.setInt(++statementIndex, account.getCurr_balance());
+			stmt.setInt(++statementIndex, account.getUser_id());
+			stmt.setString(++statementIndex, account.getName());
+			int addAccountSuccess = stmt.executeUpdate();
+			if (addAccountSuccess == 0) {
+				logger.info("Success: Opened new account with $" + account.getCurr_balance()+ ".");
+				return true;
+			}
+		} catch(SQLException | ClassNotFoundException e) {
+			logger.error("Erred with -------->" + e);
+		}
 		return false;
 	}
 
