@@ -45,6 +45,8 @@ public class Terminal {
 					"(v)erify users, view (t)ransacutions, view (a)ll users, (q)uit, (h)elp.";
 	public static final String ADMIN_TX_OPTIONS = "  Admin transaction options: " +
 					"view (a)ll account transactions, view (y)our transactions, view (w)ithdrawal transactions, view (d)eposit transactions, vi(e)w transactions by date.";
+	public static final String CUSTOMER_TX_OPTIONS = "	Customer transaction options: " +
+					"view all (y)our past transactions, view (w)ithdrawal transactions, view (d)eposit transactions";
 	public static List<User> allUsers = UserService.getInstance().getAllUsers();
 	
 	public static void checkAdminStatus(User user) {
@@ -255,13 +257,13 @@ public class Terminal {
 		}
 	}
 	public static void handleTxOptions() {
-		System.out.println(ADMIN_TX_OPTIONS);
+		System.out.println(user.getUser_role() > 0 ? ADMIN_TX_OPTIONS : CUSTOMER_TX_OPTIONS);
 		String choice = scanner.next();
 		if (choice.toLowerCase().equals("a")) {
 			System.out.println("clicked a...");
 			//a, y, w, d, e
 			viewAllTx();
-		} else if (choice.toLowerCase().equals("u")) {
+		} else if (choice.toLowerCase().equals("u") && user.getUser_role() > 0) {
 			viewAnyoneUsersTxs();
 		} else if (choice.toLowerCase().startsWith("y")) {
 			viewMyTx();
@@ -273,19 +275,22 @@ public class Terminal {
 	}
 	public static void viewMyDepositTx() {
 		List<Transaction> allTx = TransactionService.getInstance().getTxsByType(user.getId(), "deposit");
-		
+		System.out.println("---------------------- Preparing data ... " + allTx.toString());
 		for (Transaction tx : allTx) {
 			System.out.println("id: " + tx.getAccount_id() + "   user_id: " + tx.getUser_id() + "   " + tx.getType().toUpperCase() + "    $" + tx.getAmount());
 		}
 	}
 	public static void viewMyWithdrawalTx() {
 		List<Transaction> allTx = TransactionService.getInstance().getTxsByType(user.getId(), "withdrawal");
+		System.out.println("---------------------- Preparing data ... " + allTx.toString());
 		for (Transaction tx : allTx) {
 			System.out.println("id: " + tx.getAccount_id() + "   user_id: " + tx.getUser_id() + "   " + tx.getType().toUpperCase() + "    $" + tx.getAmount());
 		}
 	}
 	public static void viewMyTx() {
-		List<Transaction> allTxBelongingToUser = TransactionService.getInstance().getTxsForUser(allUsers.indexOf(user.getId()));
+		List<Transaction> allTxBelongingToUser = TransactionService.getInstance().getTxsForUser(user.getId());
+		
+		System.out.println("--------------------- Preparing data ... " + allTxBelongingToUser.toString());
 		for (Transaction tx : allTxBelongingToUser) {
 			System.out.println("id: " + tx.getAccount_id() + "   user_id: " + tx.getUser_id() + "   " + tx.getType().toUpperCase() + "    $" + tx.getAmount());
 		}

@@ -95,7 +95,7 @@ public class TransactionDaoImp implements TransactionDao {
 			String sql = "SELECT * FROM TRANSACTIONS WHERE USER_ID = ? AND TYPE = ?";
 			PreparedStatement stmt = connect.prepareStatement(sql);
 			stmt.setInt(++statementIndex, user_id);
-			stmt.setString(++statementIndex, txType);
+			stmt.setString(++statementIndex, txType.toUpperCase());
 			ResultSet results = stmt.executeQuery();
 			List<Transaction> transactionList = new ArrayList<>();
 			System.out.println("results of get all tx: " + transactionList.toString());
