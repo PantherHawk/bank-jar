@@ -50,8 +50,7 @@ public class Terminal {
 	public static void checkAdminStatus(User user) {
 		System.out.println("user role id: " + user.getUser_role());
 		if (user.getUser_role() > 0) {
-			System.out.println("\\033[0;1m" + " Welcome admin privelaged user!");
-			System.out.println(" Here are your pending users.");
+			
 			final List<User> userList = UserService.getInstance().getAllUsers();
 			final List<User> verifiedUsers = new ArrayList<User>();
 			Iterator<User> iter = userList.iterator();
@@ -64,8 +63,16 @@ public class Terminal {
 					iter.remove();
 				}
 			}
-			System.out.println("verified users: " + verifiedUsers);
-			System.out.println("pending users: " + userList);
+			pendingUsers = userList;
+			System.out.println("Verified users: " + "\n");
+			for (User v_user : verifiedUsers) {
+				System.out.println("id: " + " " + v_user.getId() + "\n" + "Name: " + " " + v_user.getFirstname() + " " + v_user.getLastname());
+			}
+			System.out.println(" Here are your pending users.");
+			for (User p_user : pendingUsers) {
+				System.out.println("id: " + " " + p_user.getId() + "\n" + "Name: " + " " + p_user.getFirstname() + " " + p_user.getLastname());
+			}
+//			System.out.println("pending users: " + userList);
 			
 		}
 	}
@@ -76,8 +83,13 @@ public class Terminal {
 			System.out.println("id: " + users.indexOf(user) + " " + user.getFirstname() + " " + user.getLastname());
 		}
 		System.out.println(" Type the id of the user you want to verify!");
-		int id = sc.nextInt();
+		String choice = sc.next();
+		if (!isNumber(choice) || Integer.parseInt(choice) > users.size() - 1 || Integer.parseInt(choice) < 0) {
+			System.out.println("Please select an id from among the available pending users.");
+			verifyUsers(pendingUsers);
+		}
 //		String[] ids = s.split("");
+		int id = Integer.parseInt(choice);
 		User toAdd = users.get(id);
 		System.out.println("Adding user: " + users.get(id));
 		if (UserService.getInstance().verifyUser(toAdd)) { 
@@ -99,16 +111,16 @@ public class Terminal {
 		System.out.println("Please enter your unique password.");
 		String passhash = scanner.nextLine();	
 //		look up in db to find user 
-		log.info("Trying to log in with username " + username + " and password " + passhash);
+		log.info(" \n"+
+				"Trying to log in with username " + username + " and password " + passhash);
 		user = UserService.getInstance().login(new User(username, passhash));
-		System.out.println("user is   " + user);
 		while (user.getId() == 0) {
 			handleNewUser();
 		}
 //		TODO: logout and log back in.
 		
-		System.out.println(user.toString());
-		System.out.println(user.getUser_role() > 0 ? "Welcome " + user.getFirstname() + "  " + user.getLastname() +" you have admin privelages!" : "Welcome " + user.getFirstname() + " " + user.getLastname() + "!");
+//		System.out.println(user.toString());
+		System.out.println(user.getUser_role() > 0 ? "\n" + "Welcome " + user.getFirstname() + "  " + user.getLastname() +" you have admin privelages!" : "\n" + "Welcome " + user.getFirstname() + " " + user.getLastname() + "!");
 		checkAdminStatus(user);
 		System.out.println(user.getUser_role() > 0 ? 
 				"Press (v) to verify users, (m) to manage your accounts, or (t) to view your transactions." : 
@@ -314,7 +326,7 @@ public class Terminal {
 			String s = scanner.nextLine();
 			if (s.startsWith("v") && user.getUser_role() > 0) {
 	//			handle verify users procedure
-				verifyUsers(allUsers);
+				verifyUsers(pendingUsers);
 			} else if (s.startsWith("m")) {
 	//			handle get all accounts procedure
 				if (user.getIsRegistered() > 0) {
@@ -335,10 +347,19 @@ public class Terminal {
 //				
 			} else if (s.startsWith("q")) {
 				System.out.println("Thanks for banking with Penny Pinchers! " + "\n Please visit us again!");
-//				handle quit procedure
-				System.exit(0);
+				logout();
+//				System.exit(0);
+			} else {
+				goToMainMenu();
 			}
 		}
+	}
+	public static void logout() {
+		user = null;
+		account = null;
+		pendingUsers = null;
+//		scanner.close();
+		start();
 	}
 	public static boolean isNumber(String s) {
 		try {
@@ -352,12 +373,13 @@ public class Terminal {
 	}
 	public static void displayAllUsers() {
 		for (User user : allUsers) {
-			System.out.println("id: " + allUsers.indexOf(user) + " " + user.getFirstname() + " " + user.getLastname());
+			System.out.println("\n" + "id: " + allUsers.indexOf(user) + " " + user.getFirstname() + " " + user.getLastname());
 		}
 	}
 	public static Scanner scanner = null;
 	public static User user = null;
 	public static Account account = null;
+	public static List<User> pendingUsers = null;
 }
 
 //while ((line = scanner.nextLine()) != null) {

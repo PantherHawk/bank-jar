@@ -116,8 +116,7 @@ public class AccountDaoImp implements AccountDao {
 			System.out.println("user id: " + user.getId());
 			ps.setInt(++statementIndex, user.getId());
 			ResultSet result = ps.executeQuery();
-			System.out.println("result set looks like    " + result
-					);
+
 			List<Account> accounts = new ArrayList<Account>();
 			while (result.next()) {
 				accounts.add(new Account(
